@@ -2,8 +2,8 @@
 
 const player = ['X', 'O']
 
-const Player1 = 'X'
-const player2 = 'O'
+const playerPerson = 'X'
+const playerAi = 'O'
 const boardNumsArray = ['0', '1', '2', '3', '4', '5', '6', '7', '8']
 const winningCombos = [
     [0, 1, 2],
@@ -31,7 +31,9 @@ const boardBoxs = document.querySelectorAll('.sqr')
 
 const resultsText = document.querySelector('#results')
 
-const resetButton = document.querySelector('button')
+const resetButton = document.querySelector('#reset')
+
+const aiButton = document.querySelector('#ai')
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -46,13 +48,6 @@ function displayPlayerMove(event) {
         singleBox.innerText = 'X'
         turn = player[0]
     }
-    // else if (winner === true) {
-    //     turn = null
-    //  singleBox.innerText = singleBox.innerText
-    // }
-
-    // const invidualGoes = wholeBoard.forEach(go)
-    // console.log(invidualGoes);
 
 }
 
@@ -64,8 +59,7 @@ function whatHasBeenPlayed(event) {
 
 function checkWinner(event) {
     const currentIdx = event.target.id
-    // if (wholeBoard[0] === turn && wholeBoard[1] === turn && wholeBoard[2] === turn) {
-    //     winner = true
+
     winningCombos.forEach((combo) => {
         if ((wholeBoard[combo[0]] === 'X' && wholeBoard[combo[1]] === 'X' &&
             wholeBoard[combo[2]] === 'X') || (wholeBoard[combo[0]] === 'O'
@@ -97,6 +91,19 @@ function checkWinner(event) {
 // )}
 
 
+function playingAi(event) {
+    singleBox = document.getElementById(`${boardNumsArray[event.target.id]}`)
+    if (singleBox.innerText === "X" || singleBox.innerText === "O") {
+       return 
+    } else {
+        singleBox.innerText = playerPerson
+    
+    } 
+}
+
+
+
+
 
 function winOrTie(event) {
     if (winner === true) {
@@ -106,29 +113,33 @@ function winOrTie(event) {
     }
 }
 
-function playGame(event) {
 
+const playGame = (event) => {
+    if (winner === true || tie === true) {
+        return
+    }
+    displayPlayerMove(event)
+    whatHasBeenPlayed(event)
+    checkWinner(event)
+    winOrTie(event)
 }
-// remove event listener after winner 
-// console.log(winner);
 
-// combo.some((winningLine) => {
+const playGameAi = (event) => {
+if (winner === true || tie === true) {
+    return
+}
+playingAi(event)
+whatHasBeenPlayed(event)
+checkWinner(event)
+winOrTie(event)
+}
 
-//     console.log(winningLine);
-//     }) 
 
-// test for some or filter 
-// a for each of the winners array if innter html is true to the same or something
 
-// const displayPlayerMove = (event) => {
-//     const boxIdx = document.querySelector(event.target.id)
-//  console.log(boxIdx);
 
 /*----------------------------- Event Listeners -----------------------------*/
 
-// console.log(boardBoxs);
-// console.log(resetButton);
-// console.log(resultsText);
+
 
 resetButton.addEventListener('click', (event) => {
     resultsText.innerText = "Results: "
@@ -140,20 +151,30 @@ resetButton.addEventListener('click', (event) => {
     })
 })
 
+// boardBoxs.forEach((box) => {
+//     box.addEventListener('click', playGame)
+// })
+
 
 
 boardBoxs.forEach((box) => {
-    box.addEventListener('click', (event) => {
-        if (winner === true || tie === true) {
-            return
-        }
-        displayPlayerMove(event)
-        whatHasBeenPlayed(event)
-        checkWinner(event)
-        winOrTie(event)
+    box.addEventListener('click', playGameAi)
 
-        // if (winner === true) {
-        //     box.removeEventListener('click')
-        // }
-    })
 })
+
+aiButton.addEventListener('click', (event) => {
+    let randomIdx = Math.floor(Math.random() * boardNumsArray.length)
+    // console.log(randomIdx);
+ let randomBox = document.getElementById(randomIdx)
+
+ while (wholeBoard[randomIdx] !== ''){
+    randomIdx = Math.floor(Math.random() * boardNumsArray.length)
+randomBox = document.getElementById(randomIdx);
+ }
+ randomBox.innerText = playerAi
+ wholeBoard[randomIdx] = playerAi
+ checkWinner(event)
+ winOrTie(event)
+}) 
+
+// need to log ai move into wholeboard array 
